@@ -115,8 +115,7 @@ class GameSearchApp(ctk.CTk):
 
         sys.stdout = old_stdout
         self.output_box.insert("end", mystdout.getvalue())
-    
-    #Display results
+
     def display_results(self, title, results):
         self.output_box.insert("end", f"\n📊 Results for '{title}'\n{'=' * 50}\n\n")
         for site, links in results.items():
