@@ -47,7 +47,6 @@ class GameSearchApp(ctk.CTk):
         )
         self.search_button.pack(pady=10)
 
-        # Output area
         self.output_box = ctk.CTkTextbox(self, width=750, height=350, wrap="word", font=("Consolas", 12))
         self.output_box.pack(pady=(20, 10))
         self.output_box.bind("<Button-1>", self.open_link)
