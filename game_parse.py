@@ -27,14 +27,16 @@ def build_search_url(site, query):
     query_path = site["path"]
     param = site["query_param"]
 
+    query_formatted = query.replace(' ', '+')
+
     if param.isnumeric():
         return f"{base}"
     elif param == 'None':
-        return f"{base}/{query_path}{query}"
+        return f"{base}/{query_path}{query_formatted}"
     elif param:
         return f"{base}/{query_path}?{urlencode({param: query})}"
     else:
-        return f"{base}/{query_path}/{query}/"
+        return f"{base}/{query_path}/{query_formatted}/"
 
 def search_site(site, query):
     url = build_search_url(site, query)
