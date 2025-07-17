@@ -12,7 +12,7 @@ class GameSearchApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("🎮 GameTitleSearch by Panos Jr")
+        self.title("🎮 Game-parse by Panos Jr")
         self.geometry("800x700")
         ctk.set_appearance_mode("System")
         ctk.set_default_color_theme("blue")
@@ -51,7 +51,6 @@ class GameSearchApp(ctk.CTk):
         self.output_box.pack(pady=(20, 10))
         self.output_box.bind("<Button-1>", self.open_link)
 
-        # Error log
         self.error_label = ctk.CTkLabel(self, text="🛠 Error Log:")
         self.error_label.pack()
         self.error_log = ctk.CTkTextbox(self, width=750, height=100, wrap="word", font=("Consolas", 10))
@@ -67,7 +66,6 @@ class GameSearchApp(ctk.CTk):
             self.config_path_var.set(path)
 
     def run_search(self):
-        # Clear output & error log safely in main thread
         self.after(0, lambda: self.output_box.delete("1.0", "end"))
         self.after(0, lambda: self.error_log.delete("1.0", "end"))
 
@@ -105,10 +103,8 @@ class GameSearchApp(ctk.CTk):
                     links = [f"Error: {e}"]
                 results[name] = links
 
-        # Update GUI with results on main thread
         self.after(0, lambda: self.display_results(title, results))
 
-        # Capture stdout
         old_stdout = sys.stdout
         sys.stdout = mystdout = io.StringIO()
 
