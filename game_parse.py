@@ -10,7 +10,7 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0"
 }
 
-ILLEGAL_CHARACTERS = r'[\\/:*?"<>|{}$!\'"&%`@+=,;.-]'
+ILLEGAL_CHARACTERS = r'[\\/:*?"<>|{}$!\'"&%`@+=,;.–-]'
 
 def sanitize_title(game_title):
     sanitized = re.sub(ILLEGAL_CHARACTERS, '', game_title)
