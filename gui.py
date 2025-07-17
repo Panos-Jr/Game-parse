@@ -87,7 +87,7 @@ class GameSearchApp(ctk.CTk):
         try:
             sites = load_sites(config)
         except Exception as e:
-            self.after(0, lambda: self.error_log.insert("end", f"Failed to load config: {e}\n"))
+            self.after(0, lambda: self.error_log.insert("end", f"Failed to load config, {e}\n"))
             return
 
         results = {}
