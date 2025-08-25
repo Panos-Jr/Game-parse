@@ -20,7 +20,7 @@ class GameSearchApp(ctk.CTk):
         self.create_widgets()
 
     def create_widgets(self):
-        self.title_label = ctk.CTkLabel(self, text="🎯 Game Title:")
+        self.title_label = ctk.CTkLabel(self, text="🎮 Game Title:")
         self.title_label.pack(pady=(20, 0))
         self.title_entry = ctk.CTkEntry(self, width=500)
         self.title_entry.pack(pady=(5, 15))
@@ -134,3 +134,4 @@ class GameSearchApp(ctk.CTk):
 if __name__ == "__main__":
     app = GameSearchApp()
     app.mainloop()
+

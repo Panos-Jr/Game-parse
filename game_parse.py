@@ -10,7 +10,7 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0"
 }
 
-ILLEGAL_CHARACTERS = r'[\\/:*?"<>|{}$!\'"&%`@+=,;.–-]'
+ILLEGAL_CHARACTERS = r'[\\/:*?"<>|{}$!\'"&%`@+=,;.-]'
 
 def sanitize_title(game_title):
     sanitized = re.sub(ILLEGAL_CHARACTERS, '', game_title)
@@ -23,24 +23,15 @@ def load_sites(json_file='sites.json'):
         return json.load(f)
 
 def build_search_url(site, query):
-    base = site["url"].rstrip('/')
-    query_path = site["path"]
-    param = site["query_param"]
-
-    query_formatted = query.replace(' ', '+')
-
-    if param.isnumeric():
-        return f"{base}"
-    elif param == 'None':
-        return f"{base}/{query_path}{query_formatted}"
-    elif param:
-        return f"{base}/{query_path}?{urlencode({param: query})}"
+    base = site["query_url"]
+    query_formatted = query.replace(' ', '%20')
+    if 'elamigos' in base:
+        return base
     else:
-        return f"{base}/{query_path}/{query_formatted}/"
+        return f"{base}{query_formatted}"
 
 def search_site(site, query):
     url = build_search_url(site, query)
-    print(url)
     try:
         response = requests.get(url, headers=HEADERS, timeout=20)
         response.raise_for_status()
