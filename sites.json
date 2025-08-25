@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Abandonware Games",
+    "description": "Archive that preserves and provides downloads of old games from various platforms.",
+    "query_url": "https://abandonwaregames.net/search.php?q=",
+    "url": "https://abandonwaregames.net"
+  },
+  {
+    "name": "AnkerGames",
+    "description": "Unleash your gaming skills with lightning-fast downloads of pre-installed portable PC games.",
+    "query_url": "https://ankergames.net/search/",
+    "url": "https://ankergames.net"
+  },
+  {
+    "name": "AtopGames",
+    "description": "Unaltered pre-installed games sourced from multiple trustworthy names in the community.",
+    "query_url": "https://atopgames.com/?s=",
+    "url": "https://atopgames.com"
+  },
+  {
+    "name": "ElAmigos",
+    "description": "Every release is lossless, preserving audio, video, and textures intact.",
+    "query_url": "https://elamigos.site/",
+    "url": "https://elamigos.site"
+  },
+  {
+    "name": "ElEnemigos",
+    "description": "Find your favorite pre-installed games from TENOKE, RUNE, P2P, and more.",
+    "query_url": "https://elenemigos.com/?g_name=",
+    "url": "https://elenemigos.com"
+  },
+  {
+    "name": "Games 4 U",
+    "description": "Created by passionate gamers who meticulously document each game's useful information.",
+    "query_url": "https://g4u.to/en/search/?str=",
+    "url": "https://g4u.to"
+  },
+  {
+    "name": "Games4U",
+    "description": "Large collection of the latest, classic, and top-rated compressed full-version games.",
+    "query_url": "https://games4u.org/?s=",
+    "url": "https://games4u.org"
+  },
+  {
+    "name": "Gamdie",
+    "description": "Source for the latest free pre-installed games, blending 'game' and 'indie' in its name.",
+    "query_url": "https://gamdie.com/?s=",
+    "url": "https://gamdie.com"
+  },
+  {
+    "name": "GameDrive",
+    "description": "Forum board offering top repacks from well-known groups like DODI and FitGirl.",
+    "query_url": "https://gamedrive.org/?s=",
+    "url": "https://gamedrive.org"
+  },
+  {
+    "name": "GAMESPACK",
+    "description": "Versatile platform that offers a wide array of computer games for smooth downloads.",
+    "query_url": "https://gamespack.net/?s=",
+    "url": "https://gamespack.net"
+  },
+  {
+    "name": "gamezdl",
+    "description": "Wide selection of PC games, including GOG versions, repacks, and even Switch games.",
+    "query_url": "https://gamezdl.cc/index.php/component/finder/search?Itemid=101&q=",
+    "url": "https://gamezdl.cc"
+  },
+  {
+    "name": "GLOAD",
+    "description": "Scene release site offers numerous free and user-friendly hosting options for easy access.",
+    "query_url": "https://gload.to/?s=",
+    "url": "https://gload.to"
+  },
+  {
+    "name": "GOG Games",
+    "description": "GOG games are free to download from a vast collection to play.",
+    "query_url": "https://gog-games.to/?search=",
+    "url": "https://gog-games.to"
+  },
+  {
+    "name": "My Abandonware",
+    "description": "The site has amassed thousands of games over the years, becoming a premier retro video game database.",
+    "query_url": "https://www.myabandonware.com/?s=",
+    "url": "https://www.myabandonware.com"
+  },
+  {
+    "name": "Old Games Download",
+    "description": "Nostalgic significance in preserving video games that are no longer available for sale.",
+    "query_url": "https://oldgamesdownload.com/search/q/",
+    "url": "https://oldgamesdownload.com"
+  },
+  {
+    "name": "Old-Games.RU",
+    "description": "Vintage computer games, aiming to evoke nostalgic memories of brighter days and greener grass.",
+    "query_url": "https://www.old-games.ru/catalog/?gamename=",
+    "url": "https://www.old-games.ru"
+  },
+  {
+    "name": "Ova Games",
+    "description": "PC games from sources like CODEX, and ElAmigos, with streamlined file hosting options.",
+    "query_url": "https://ovagames.com/?s=",
+    "url": "https://ovagames.com"
+  },
+  {
+    "name": "Repacklab",
+    "description": "Experience pre-installed games + DLCs, updates, and the latest features and fixes.",
+    "query_url": "https://repacklab.com/?s=",
+    "url": "https://repacklab.com"
+  },
+  {
+    "name": "Steam-Cracked",
+    "description": "Eat, sleep, and play the latest game releases with DLCs, and repeat the process.",
+    "query_url": "https://steam-cracked.com/?s=",
+    "url": "https://steam-cracked.com"
+  },
+  {
+    "name": "SteamGG",
+    "description": "Platform offering a variety of cracked Steam games for free download.",
+    "query_url": "https://steamgg.net/?s=",
+    "url": "https://steamgg.net"
+  },
+  {
+    "name": "SteamRIP",
+    "description": "Platform offering a variety of cracked Steam games for free download.",
+    "query_url": "https://steamrip.com/?s=",
+    "url": "https://steamrip.com"
+  },
+  {
+    "name": "FitGirl Repacks",
+    "description": "Platform offering a variety of repacked games for free download.",
+    "query_url": "https://fitgirl-repacks.site/?s=",
+    "url": "https://fitgirl-repacks.site"
+  }
+]
