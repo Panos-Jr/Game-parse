@@ -31,14 +31,12 @@ def build_search_url(site, query):
         return f"{base}{query_formatted}"
 
 def get_page_with_requests(url):
-    try:
-        response = requests.get(url, headers=HEADERS, timeout=20)
-        if response.status_code == 403:
-            return None
-        response.raise_for_status()
-        return response.text
-    except Exception as e:
+    response = requests.get(url, headers=HEADERS, timeout=20)
+    if response.status_code == 403:
+        print(f'got one, {url}')
         return None
+    response.raise_for_status()
+    return response.text
 
 def get_page_with_selenium(url):
     driver = Driver(uc=True)
