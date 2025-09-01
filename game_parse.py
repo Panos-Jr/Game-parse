@@ -1,10 +1,10 @@
-import sys
-import os
-import requests
 import json
-from bs4 import BeautifulSoup
-from urllib.parse import urlencode
 import re
+import requests
+from bs4 import BeautifulSoup
+from seleniumbase import Driver
+from selenium.webdriver.common.by import By
+import time
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0"
@@ -30,20 +30,39 @@ def build_search_url(site, query):
     else:
         return f"{base}{query_formatted}"
 
-def search_site(site, query):
-    url = build_search_url(site, query)
+def get_page_with_requests(url):
     try:
         response = requests.get(url, headers=HEADERS, timeout=20)
+        if response.status_code == 403:
+            return None
         response.raise_for_status()
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        matches = []
-        for a in soup.find_all('a', href=True):
-            if sanitize_title(query.lower()) in sanitize_title(a.text.lower()):
-                link = a['href']
-                if not link.startswith('http'):
-                    link = f"{site['url'].rstrip('/')}/{link.lstrip('/')}"
-                matches.append(link)
-        return (site['name'], matches)
+        return response.text
     except Exception as e:
-        return (site['name'], [f"Error: {e}"])
+        return None
+
+def get_page_with_selenium(url):
+    driver = Driver(uc=True)
+    driver.uc_open_with_reconnect(url, 10)
+    driver.uc_gui_click_captcha()
+    html = driver.page_source
+    driver.quit()
+    return html
+
+def search_site(site, query):
+    url = build_search_url(site, query)
+    html = get_page_with_requests(url)
+
+    if html is None:
+        html = get_page_with_selenium(url)
+
+    soup = BeautifulSoup(html, 'html.parser')
+    matches = []
+
+    for a in soup.find_all('a', href=True):
+        if sanitize_title(query.lower()) in sanitize_title(a.text.lower()):
+            link = a['href']
+            if not link.startswith('http'):
+                link = f"{site['url'].rstrip('/')}/{link.lstrip('/')}"
+            matches.append(link)
+
+    return (site['name'], matches)
