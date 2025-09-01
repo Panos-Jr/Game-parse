@@ -7,6 +7,7 @@ import re
 import threading
 import game_parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from tkinter import messagebox
 
 class GameSearchApp(ctk.CTk):
     def __init__(self):
@@ -39,13 +40,16 @@ class GameSearchApp(ctk.CTk):
         self.thread_dropdown = ctk.CTkOptionMenu(self, values=[str(i) for i in range(1, 21)], variable=self.thread_count_var)
         self.thread_dropdown.pack(pady=(0, 20))
 
-
         self.search_button = ctk.CTkButton(
             self,
             text="Search",
             command=self.start_search_thread
         )
         self.search_button.pack(pady=10)
+
+        self.info_label = ctk.CTkLabel(self, text="Note: A Chrome window may open for Cloudflare verification, don't panic!")
+        self.info_label.pack(pady=(20, 0))
+
 
         self.output_box = ctk.CTkTextbox(self, width=750, height=350, wrap="word", font=("Consolas", 12))
         self.output_box.pack(pady=(20, 10))
