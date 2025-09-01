@@ -80,13 +80,13 @@
   {
     "name": "My Abandonware",
     "description": "The site has amassed thousands of games over the years, becoming a premier retro video game database.",
-    "query_url": "https://www.myabandonware.com/?s=",
+    "query_url": "https://www.myabandonware.com/q/",
     "url": "https://www.myabandonware.com"
   },
   {
     "name": "Old Games Download",
     "description": "Nostalgic significance in preserving video games that are no longer available for sale.",
-    "query_url": "https://oldgamesdownload.com/search/q/",
+    "query_url": "https://oldgamesdownload.com/search/?s=",
     "url": "https://oldgamesdownload.com"
   },
   {
