@@ -47,7 +47,7 @@ class GameSearchApp(ctk.CTk):
         )
         self.search_button.pack(pady=10)
 
-        self.info_label = ctk.CTkLabel(self, text="Note: A Chrome window may open for Cloudflare verification, don't panic!")
+        self.info_label = ctk.CTkLabel(self, text="Note: A Chrome window may open whilst parsing, don't panic!")
         self.info_label.pack(pady=(20, 0))
 
 
@@ -103,8 +103,10 @@ class GameSearchApp(ctk.CTk):
                 try:
                     name, links = future.result()
                 except Exception as e:
+                    print(e)
                     name = site['name']
-                    links = [f"Error: {e}"]
+                    self.error_log.insert("end", f"Error: {e}\n")
+                    links = None
                 results[name] = links
 
         self.after(0, lambda: self.display_results(title, results))
