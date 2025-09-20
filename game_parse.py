@@ -16,6 +16,7 @@ def sanitize_title(game_title):
     sanitized = re.sub(ILLEGAL_CHARACTERS, '', game_title)
     sanitized = re.sub(r'[^\x00-\x7F]+', '', sanitized)
     sanitized = re.sub(r'_+', '_', sanitized).strip('_')
+    sanitized = ''.join(sanitized.split())
     return sanitized
 
 def load_sites(json_file='sites.json'):
@@ -26,6 +27,7 @@ def build_search_url(site, query):
     base = site["query_url"]
     query_formatted = query.replace(' ', '%20')
     if 'elamigos' in base:
+        print(f'found it {base}')
         return base
     else:
         return f"{base}{query_formatted}"
@@ -33,7 +35,6 @@ def build_search_url(site, query):
 def get_page_with_requests(url):
     response = requests.get(url, headers=HEADERS, timeout=20)
     if response.status_code == 403:
-        print(f'got one, {url}')
         return None
     response.raise_for_status()
     return response.text
@@ -49,6 +50,9 @@ def get_page_with_selenium(url):
 def search_site(site, query):
     url = build_search_url(site, query)
     html = get_page_with_requests(url)
+
+    if 'elamigos' in url:
+        print(html)
 
     if html is None:
         html = get_page_with_selenium(url)
