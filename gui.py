@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from tkinter import filedialog
 import io
+import ctypes, os
 import sys
 import webbrowser
 import re
@@ -68,6 +69,14 @@ class GameSearchApp(ctk.CTk):
         path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
         if path:
             self.config_path_var.set(path)
+
+    def check_for_admin(self):
+        try:
+            is_admin = (os.getuid() == 0)
+            messagebox.showwarning("Admin privileges", "It's highly recommended to run this program as admin for it to work properly")
+        except AttributeError:
+            is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+        return is_admin
 
     def run_search(self):
         self.after(0, lambda: self.output_box.delete("1.0", "end"))
@@ -139,5 +148,6 @@ class GameSearchApp(ctk.CTk):
 
 if __name__ == "__main__":
     app = GameSearchApp()
+    app.check_for_admin()
     app.mainloop()
 
