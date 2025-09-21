@@ -72,11 +72,30 @@ class GameSearchApp(ctk.CTk):
 
     def check_for_admin(self):
         try:
-            is_admin = (os.getuid() == 0)
-            messagebox.showwarning("Admin privileges", "It's highly recommended to run this program as admin for it to work properly")
-        except AttributeError:
             is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
-        return is_admin
+        except Exception:
+            is_admin = False
+
+        if not is_admin:
+            print("Not running as admin")
+
+            messagebox.showwarning(
+                "Admin privileges",
+                "This program needs to be run as administrator. Relaunching now..."
+            )
+
+            # Relaunch with admin rights (UAC prompt will appear)
+            try:
+                ctypes.windll.shell32.ShellExecuteW(
+                    None, "runas", sys.executable, " ".join(sys.argv), None, 1
+                )
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to relaunch as admin:\n{e}")
+            sys.exit(0)
+
+        else:
+            print("Running as admin")
+            
 
     def run_search(self):
         self.after(0, lambda: self.output_box.delete("1.0", "end"))
@@ -148,6 +167,8 @@ class GameSearchApp(ctk.CTk):
 
 if __name__ == "__main__":
     app = GameSearchApp()
-    app.check_for_admin()
+    admin = app.check_for_admin()
+    if admin:
+        print('admin')
     app.mainloop()
 
