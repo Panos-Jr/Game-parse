@@ -167,8 +167,6 @@ class GameSearchApp(ctk.CTk):
 
 if __name__ == "__main__":
     app = GameSearchApp()
-    admin = app.check_for_admin()
-    if admin:
-        print('admin')
+    app.check_for_admin()
     app.mainloop()
 
