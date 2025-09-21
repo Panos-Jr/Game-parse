@@ -73,6 +73,7 @@ class GameSearchApp(ctk.CTk):
     def check_for_admin(self):
         try:
             is_admin = (os.getuid() == 0)
+            messagebox.showwarning("Admin privileges", "It's highly recommended to run this program as admin for it to work properly")
         except AttributeError:
             is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
         return is_admin
