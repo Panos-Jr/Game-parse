@@ -72,7 +72,7 @@
     "url": "https://gload.to"
   },
   {
-    "name": "GOG Games",
+    "name": "GOG Games ⭐",
     "description": "GOG games are free to download from a vast collection to play.",
     "query_url": "https://gog-games.to/?search=",
     "url": "https://gog-games.to"
@@ -80,7 +80,7 @@
   {
     "name": "My Abandonware",
     "description": "The site has amassed thousands of games over the years, becoming a premier retro video game database.",
-    "query_url": "https://www.myabandonware.com/q/",
+    "query_url": "https://www.myabandonware.com/search/q/",
     "url": "https://www.myabandonware.com"
   },
   {
@@ -114,15 +114,69 @@
     "url": "https://steam-cracked.com"
   },
   {
-    "name": "SteamRIP",
+    "name": "SteamRIP ⭐",
     "description": "Platform offering a variety of cracked Steam games for free download.",
     "query_url": "https://steamrip.com/?s=",
     "url": "https://steamrip.com"
   },
   {
-    "name": "FitGirl Repacks",
+    "name": "FitGirl Repacks ⭐",
     "description": "Platform offering a variety of repacked games for free download.",
     "query_url": "https://fitgirl-repacks.site/?s=",
     "url": "https://fitgirl-repacks.site"
+  },
+  {
+    "name": "Dodi Repacks ⭐",
+    "description": "Platform offering a variety of repacked games for free download.",
+    "query_url": "https://dodi-repacks.site/?s=",
+    "url": "https://dodi-repacks.site"
+  },
+  {
+    "name": "Vimm's Lair ⭐",
+    "description": "Platform offering a variety of ROMS from many different consoles.",
+    "query_url": "https://vimm.net/vault/?p=list&q=",
+    "url": "https://vimm.net"
+  },
+  {
+    "name": "Rom Hustler",
+    "description": "Platform offering a variety of ROMS from many different consoles.",
+    "query_url": "https://romhustler.org/roms/search?query=",
+    "url": "https://romhustler.org"
+  },
+  {
+    "name": "Romulation",
+    "description": "Platform offering a variety of ROMS from many different consoles.",
+    "query_url": "https://www.romulation.org/roms/search?query=",
+    "url": "https://www.romulation.org"
+  },
+  {
+    "name": "Blueroms",
+    "description": "Platform offering a variety of ROMS from many different consoles.",
+    "query_url": "https://www.blueroms.ws/search?g=0&p=0&q=",
+    "url": "https://www.blueroms.ws"
+  },
+  {
+    "name": "Romspure",
+    "description": "Platform offering a variety of ROMS from many different consoles.",
+    "query_url": "https://romspure.cc/?s=",
+    "url": "https://romspure.cc"
+  },
+  {
+    "name": "Nxbrew",
+    "description": "Platform offering a variety of ROMS from many different consoles.",
+    "query_url": "https://nxbrew.net/?s=",
+    "url": "https://nxbrew.net"
+  },
+  {
+    "name": "EpicRoms",
+    "description": "Platform offering a variety of ROMS from many different consoles.",
+    "query_url": "https://epicroms.net/?s=",
+    "url": "https://epicroms.net"
+  },
+  {
+    "name": "Online-Fix ⭐",
+    "description": "Platform offering a variety of cracked games with co-op/mulitplayer support.",
+    "query_url": "https://online-fix.me/index.php?do=search&subaction=search&story=",
+    "url": "https://online-fix.me"
   }
 ]
