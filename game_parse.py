@@ -1,123 +1,199 @@
+"""
+game_parse.py
+─────────────
+Fast, parallel game-search scraper.
+
+Key improvements over v1:
+  • Single shared httpx.Client with HTTP/2 + connection pooling
+    → reuses TCP connections across all sites instead of opening a new
+      socket for every request
+  • lxml parser instead of html.parser  (~3-5x faster BeautifulSoup)
+  • Pre-compiled regex patterns cached at import time
+  • GOG catalogue cached in memory after the first fetch
+  • Persistent Selenium driver (single Chrome instance, serialised with a lock)
+  • Per-site handler dispatch table — easy to extend
+
+Install deps:
+    pip install httpx[http2] lxml beautifulsoup4 seleniumbase
+"""
+
+from __future__ import annotations
+
 import json
 import re
-import requests
+import threading
+from urllib.parse import quote, urljoin
+
+import httpx
 from bs4 import BeautifulSoup
 from seleniumbase import Driver
-from urllib.parse import urljoin
 
-HEADERS = {"User-Agent": "Mozilla/5.0"}
-ILLEGAL_CHARACTERS = r'[\\/:*?"<>|{}$!\'"&%`@+=,;.-]'
-API_BASE = "https://gog-games.to/api/web"
+_CLIENT = httpx.Client(
+    http2=True,
+    follow_redirects=True,
+    timeout=httpx.Timeout(connect=6.0, read=15.0, write=6.0, pool=6.0),
+    headers={
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        ),
+        "Accept-Language": "en-US,en;q=0.9",
+    },
+    limits=httpx.Limits(max_connections=40, max_keepalive_connections=30),
+)
 
-def sanitize_title(game_title):
-    sanitized = re.sub(ILLEGAL_CHARACTERS, '', game_title)
-    sanitized = re.sub(r'[^\x00-\x7F]+', '', sanitized)
-    sanitized = re.sub(r'_+', '_', sanitized).strip('_')
-    sanitized = ''.join(sanitized.split())
-    return sanitized
+_selenium_lock  = threading.Lock()
+_selenium_driver: Driver | None = None
 
-def load_sites(json_file='sites.json'):
-    with open(json_file, 'r', encoding='utf-8') as f:
+
+def _get_driver() -> Driver:
+    global _selenium_driver
+    if _selenium_driver is None:
+        _selenium_driver = Driver(uc=True)
+    return _selenium_driver
+
+
+def close_selenium_driver() -> None:
+    global _selenium_driver
+    if _selenium_driver:
+        try:
+            _selenium_driver.quit()
+        except Exception:
+            pass
+        _selenium_driver = None
+
+
+_GOG_API   = "https://gog-games.to/api/web/all-games"
+_GOG_BASE  = "https://gog-games.to/game/"
+_gog_lock  = threading.Lock()
+_gog_index: dict[str, str] | None = None
+
+
+def _ensure_gog_cache() -> dict[str, str]:
+    global _gog_index
+    with _gog_lock:
+        if _gog_index is None:
+            resp = _CLIENT.get(_GOG_API)
+            resp.raise_for_status()
+            _gog_index = {
+                g["slug"]: _clean(g.get("title", "")).lower()
+                for g in resp.json()
+            }
+    return _gog_index
+
+_ILLEGAL   = re.compile(r'[\\/:*?"<>|{}$!\'"&%`@+=,;.\-]')
+_NON_ASCII = re.compile(r'[^\x00-\x7F]+')
+_SPACES    = re.compile(r'\s+')
+
+
+def _clean(text: str) -> str:
+    #Strip punctuation, non-ASCII, and whitespace
+    s = _ILLEGAL.sub('', text)
+    s = _NON_ASCII.sub('', s)
+    return _SPACES.sub('', s)
+
+
+def load_sites(json_file: str = 'sites.json') -> list[dict]:
+    with open(json_file, encoding='utf-8') as f:
         return json.load(f)
 
-def build_search_url(site, query):
+
+def _build_url(site: dict, query: str) -> str:
     base = site["query_url"]
-    query_formatted = query.replace(' ', '%20')
     if 'elamigos' in base:
-        return base
-    else:
-        return f"{base}{query_formatted}"
-    
-def search_gog_games(query):
-    results = []
+        return base          # static listing page — no query string
+    return f"{base}{quote(query, safe='')}"
+
+
+def _soup(html: str) -> BeautifulSoup:
+    """Parse HTML with lxml when available, falling back to html.parser."""
     try:
-        response = requests.get(f"{API_BASE}/all-games", headers=HEADERS, timeout=20)
-        response.raise_for_status()
-        all_games = response.json()
-        query_clean = sanitize_title(query)
-        base_url = 'https://gog-games.to/game/'
-        for game in all_games:
-            title = game.get("title", "")
-            if query_clean.lower() in sanitize_title(title).lower():
-                results.append(base_url + game.get("slug"))
-    except Exception as e:
-        print(f"[GOG Games] Error: {e}")
-    return results
+        return BeautifulSoup(html, 'lxml')
+    except Exception:
+        return BeautifulSoup(html, 'html.parser')
 
 
-def get_elamigos_page(url, query):
-    results = []
-    try:
-        resp = requests.get(url, headers={"User-Agent": "MyBot/1.0 (+you@example.com)"})
-        resp.raise_for_status()
-        html = resp.text
+def _extract_links(html: str, query: str, site_url: str) -> list[str]:
+    """Return hrefs whose link text fuzzy-matches the query."""
+    q     = _clean(query).lower()
+    base  = site_url.rstrip('/')
+    links = []
+    for a in _soup(html).find_all('a', href=True):
+        if q in _clean(a.get_text()).lower():
+            href = a['href']
+            if not href.startswith('http'):
+                href = f"{base}/{href.lstrip('/')}"
+            links.append(href)
+    return links
 
-        with open("page.html", "w", encoding="utf-8") as f:
-            f.write(html)
+#site-specific exceptions
+def _search_gog(site: dict, query: str) -> tuple[str, list[str]]:
+    index   = _ensure_gog_cache()
+    q_clean = _clean(query).lower()
+    links   = [_GOG_BASE + slug for slug, title in index.items() if q_clean in title]
+    return (site['name'], links)
 
-        soup = BeautifulSoup(html, "html.parser")
-        candidates = soup.find_all(string=re.compile(r"\b" + re.escape(query) + r"\b", flags=re.I))
-        for node in candidates:
-            parent = node.parent
-            a = parent.find("a", href=True)
+
+def _search_elamigos(site: dict, query: str) -> tuple[str, list[str]]:
+    url  = _build_url(site, query)
+    resp = _CLIENT.get(url, headers={"User-Agent": "MyBot/1.0 (+bot@example.com)"})
+    resp.raise_for_status()
+
+    pattern = re.compile(r"\b" + re.escape(query) + r"\b", re.I)
+    results: list[str] = []
+
+    for node in _soup(resp.text).find_all(string=pattern):
+        parent     = node.parent
+        candidates = (
+            [parent]
+            + list(parent.find_next_siblings(limit=3))
+            + list(parent.find_previous_siblings(limit=3))
+        )
+        for c in candidates:
+            a = c.find('a', href=True) if hasattr(c, 'find') else None
             if a:
-                results.append(urljoin(url, a["href"]))
-                continue
-            # try siblings
-            for sib in parent.find_next_siblings(limit=3):
-                a = sib.find("a", href=True)
-                if a:
-                    results.append(urljoin(url, a["href"]))
-                    break
-            for sib in parent.find_previous_siblings(limit=3):
-                a = sib.find("a", href=True)
-                if a:
-                    results.append(urljoin(url, a["href"]))
-                    break
-    except Exception as e:
-        print(f"[ElAmigos] Error: {e}")
-    return results
-
-
-def get_page_with_requests(url):
-    response = requests.get(url, headers=HEADERS, timeout=20)
-    if response.status_code == 403:
-        return None
-    response.raise_for_status()
-    return response.text
-
-def get_page_with_selenium(url):
-    driver = Driver(uc=True)
-    driver.uc_open_with_reconnect(url, 10)
-    driver.uc_gui_click_captcha()
-    html = driver.page_source
-    driver.quit()
-    return html
-
-def search_site(site, query):
-    """Main entry point for site search."""
-    url = build_search_url(site, query)
-
-    if 'https://gog-games.to' in url:
-        print('→ Using GOG Games API')
-        return (site['name'], search_gog_games(query))
-
-    if 'https://elamigos.site' in url:
-        print('→ Parsing ElAmigos')
-        return (site['name'], get_elamigos_page(url, query))
-
-    html = get_page_with_requests(url)
-    if html is None:
-        html = get_page_with_selenium(url)
-
-    soup = BeautifulSoup(html, 'html.parser')
-    results = []
-
-    for a in soup.find_all('a', href=True):
-        if sanitize_title(query.lower()) in sanitize_title(a.text.lower()):
-            link = a['href']
-            if not link.startswith('http'):
-                link = f"{site['url'].rstrip('/')}/{link.lstrip('/')}"
-            results.append(link)
+                results.append(urljoin(url, a['href']))
+                break
 
     return (site['name'], results)
+
+
+def _search_generic(site: dict, query: str) -> tuple[str, list[str]]:
+    """Try plain HTTP first; fall back to Selenium when blocked."""
+    url  = _build_url(site, query)
+    html = None
+
+    if not site.get('requires_selenium', False):
+        try:
+            resp = _CLIENT.get(url)
+            if resp.status_code != 403:
+                resp.raise_for_status()
+                html = resp.text
+        except (httpx.HTTPStatusError, httpx.RequestError):
+            pass
+
+    if html is None:
+        with _selenium_lock:
+            drv = _get_driver()
+            drv.uc_open_with_reconnect(url, 10)
+            drv.uc_gui_click_captcha()
+            html = drv.page_source
+
+    return (site['name'], _extract_links(html, query, site['url']))
+
+
+
+#new site handlers here; search_site() needs no changes
+
+_DISPATCH: dict[str, callable] = {
+    'https://gog-games.to':  _search_gog,
+    'https://elamigos.site': _search_elamigos,
+}
+
+
+def search_site(site: dict, query: str) -> tuple[str, list[str]]:
+    for prefix, handler in _DISPATCH.items():
+        if site.get('url', '').startswith(prefix):
+            return handler(site, query)
+    return _search_generic(site, query)
