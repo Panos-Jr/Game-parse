@@ -1,22 +1,3 @@
-"""
-game_parse.py
-─────────────
-Fast, parallel game-search scraper.
-
-Key improvements over v1:
-  • Single shared httpx.Client with HTTP/2 + connection pooling
-    → reuses TCP connections across all sites instead of opening a new
-      socket for every request
-  • lxml parser instead of html.parser  (~3-5x faster BeautifulSoup)
-  • Pre-compiled regex patterns cached at import time
-  • GOG catalogue cached in memory after the first fetch
-  • Persistent Selenium driver (single Chrome instance, serialised with a lock)
-  • Per-site handler dispatch table — easy to extend
-
-Install deps:
-    pip install httpx[http2] lxml beautifulsoup4 seleniumbase
-"""
-
 from __future__ import annotations
 
 import json
