@@ -32,7 +32,7 @@
   {
     "name": "Games 4 U",
     "description": "Created by passionate gamers who meticulously document each game's useful information.",
-    "query_url": "https://g4u.to/en/search/?str=",
+    "query_url": "https://g4u.to/en/search/",
     "url": "https://g4u.to"
   },
   {
@@ -58,12 +58,6 @@
     "description": "Versatile platform that offers a wide array of computer games for smooth downloads.",
     "query_url": "https://gamespack.net/?s=",
     "url": "https://gamespack.net"
-  },
-  {
-    "name": "gamezdl",
-    "description": "Wide selection of PC games, including GOG versions, repacks, and even Switch games.",
-    "query_url": "https://gamezdl.cc/index.php/component/finder/search?Itemid=101&q=",
-    "url": "https://gamezdl.cc"
   },
   {
     "name": "GLOAD",
@@ -100,12 +94,6 @@
     "description": "PC games from sources like CODEX, and ElAmigos, with streamlined file hosting options.",
     "query_url": "https://ovagames.com/?s=",
     "url": "https://ovagames.com"
-  },
-  {
-    "name": "Repacklab",
-    "description": "Experience pre-installed games + DLCs, updates, and the latest features and fixes.",
-    "query_url": "https://repacklab.com/?s=",
-    "url": "https://repacklab.com"
   },
   {
     "name": "Steam-Cracked",
