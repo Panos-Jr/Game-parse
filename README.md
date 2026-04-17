@@ -1,5 +1,5 @@
 # Game-parse
-Simple GUI app built with basic html parsing to find the game you're looking for
+Simple GUI app built with basic html parsing to find the game you're looking for, <b>recommended to run as Admin</b>
 
 ## GUI
 This is a screenshot of the GUI, for a quick preview
