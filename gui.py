@@ -14,7 +14,7 @@ class GameSearchApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("🎮 Game-parse by Panos Jr - v1.3")
+        self.title("🎮 Game-parse by Panos Jr - v1.2")
         self.geometry("800x720")
         ctk.set_appearance_mode("System")
         ctk.set_default_color_theme("blue")
