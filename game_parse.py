@@ -88,7 +88,6 @@ def _build_url(site: dict, query: str) -> str:
 
 
 def _soup(html: str) -> BeautifulSoup:
-    """Parse HTML with lxml when available, falling back to html.parser."""
     try:
         return BeautifulSoup(html, 'lxml')
     except Exception:
@@ -96,7 +95,6 @@ def _soup(html: str) -> BeautifulSoup:
 
 
 def _extract_links(html: str, query: str, site_url: str) -> list[str]:
-    """Return hrefs whose link text fuzzy-matches the query."""
     q     = _clean(query).lower()
     base  = site_url.rstrip('/')
     links = []
@@ -141,7 +139,6 @@ def _search_elamigos(site: dict, query: str) -> tuple[str, list[str]]:
 
 
 def _search_generic(site: dict, query: str) -> tuple[str, list[str]]:
-    """Try plain HTTP first; fall back to Selenium when blocked."""
     url  = _build_url(site, query)
     html = None
 
